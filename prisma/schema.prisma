@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  student_id String   @unique
+  name       String
+  gender     String
+  year       Int
+  academic   String
+  class      String
+  type       String
+  phone      String
+  idcard     String
+  createdAt  DateTime @default(now())
+
+  session Session?
+  records Record[]
+
+  @@map("users")
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  cookie    Json
+  password  String?
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("sessions")
+}
+
+model Record {
+  id         Int      @id @default(autoincrement())
+  student_id String @default("anonymous")
+  kcbh       Int
+  kcmc       String
+  kclbmc     String
+  kcxzmc     String
+  rkls       String[]
+  xn         Int
+  xq         Int
+  xf         Float
+  cj         String
+  bfzcj      Int
+  jd         Float
+  xfjd       Float
+  md5        String   @unique
+
+  user User @relation(fields: [student_id], references: [student_id], onDelete: SetDefault, onUpdate: Cascade)
+
+  @@map("records")
+}
